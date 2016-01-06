@@ -1,0 +1,77 @@
+--- ATP Residue Prediction ---
+by Bryan Andrews and Jing Hu
+
+--- Set-up and Configuration---
+Before running the program, you must make a directory in the pipeline folder
+which holds the .fa files of which you wish to predict the ATP binding
+residues (do no call the directory trainer).  Next you will have to update
+the path to blast, the nr-database, disopred, and weka.  If you open the
+pipeline.py file they will be at the top and clearly labeled.  These tools
+must be set up correctly; see their readme files for set up intructions.
+
+Note, the file trainer_zscores had to be split into 4 files in accordance
+to GitHub's maximum file limit.  Please change to the Data directory and
+run the following command:
+
+cat trainer_zscores_* > trainer_zscores.txt; rm trainer_zscores_*
+
+--- Running ---
+The program has 7 parameters/options:
+
+-d directory
+This is the directory you created which holds the novel data to be processed
+and is the only required parameter.
+
+-n number of threads
+This will allows for multithreading.  Note that if you wish for disopred to
+use multithreading you must go into the disopred tool and adjust that
+yourself. This is defaulted to 1.
+
+-k k neighbors for KNN
+This the number of nearest neighbors used in the first classifier. This is
+defaulted to 65.
+
+-a alpha value for KNN
+This value is used to modify the significance of the values generated in the
+first classifer. This is defaulted to 7.8.
+
+-b run blast
+This allows you to run or not run blast (takes 0 for don't run blast or 1 for
+run blast). Only choose to not run blast if you already have the pssm-matrix
+files from a previous run. The directory holding these files must be in the
+pipeline folder. This is defaulted to 1.
+
+-f feature selection
+This is a string if booleans that are associated the features which you wish
+to have turned on or off (0 specifies off and 1 specifies on). There are 14
+featuresin total which in order are:
+KNNprediction confidence score from the first classifer
+Position      position of the residue in the protein sequence
+Residue       alphanumeric representation of the residue
+BULH740101    transfer free energy to surface
+EISD840101    consensus normalized hydrophobicity
+HOPT810101    hydrophilicity value 
+RADA880108    mean polarity 
+ZIMJ680104    isoelectric point 
+MCMT640101    refractivity
+BHAR880101    average flexibility indices 
+CHOC750101    average volume of buried residue 
+COSI940101    electron-ion interaction potential values
+Entropy       entropy score of the residue
+Disorder      disorder score of the residue
+This is defaulted to 10010101101111 which is:
+KNNprediction
+BULH740101
+RADA880108
+MCMT640101
+CHOC750101
+COSI940101
+Entropy
+Disorder
+
+-t threshold value
+This specifies the threshold at which you want to classify a confidence score
+as postive ATP binding or negative non-ATP binding for the second classfier.
+This is defaulted to 0.5
+
+The results will be written to the Results directory in .fa file format.
